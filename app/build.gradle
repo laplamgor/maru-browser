@@ -43,5 +43,5 @@ dependencies {
 
     compileOnly 'com.google.android.wearable:wearable:2.8.1'
 
-    implementation "org.mozilla.geckoview:geckoview-${geckoviewChannel}:${geckoviewVersion}"
+    implementation "org.mozilla.geckoview:geckoview:90.0.20210705185941"
 }
