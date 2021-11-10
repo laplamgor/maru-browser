@@ -1,11 +1,13 @@
 package com.laplamgor.marubrowser
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.Nullable
 import androidx.fragment.app.FragmentActivity
+import androidx.wear.widget.drawer.WearableDrawerView
 import org.json.JSONException
 import org.json.JSONObject
 import org.mozilla.geckoview.*
@@ -17,8 +19,9 @@ import org.mozilla.geckoview.WebExtension.MessageSender
 class MainActivity : FragmentActivity() {
     private var runtime: GeckoRuntime? = null
 
-    private val EXTENSION_LOCATION = "resource://android/assets/messaging/"
+    private val extensionLocation = "resource://android/assets/messaging/"
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -58,7 +61,7 @@ class MainActivity : FragmentActivity() {
         // Make sure the extension is installed
         runtime!!
                 .webExtensionController
-                .ensureBuiltIn(EXTENSION_LOCATION, "messaging@example.com")
+                .ensureBuiltIn(extensionLocation, "messaging@example.com")
                 .accept( // Set delegate that will receive messages coming from this extension.
                         { extension ->
                             session
@@ -74,9 +77,15 @@ class MainActivity : FragmentActivity() {
 //        session.loadUri("http://www.dmm.com/netgame/social/-/gadgets/=/app_id=854854/")
         session.loadUri("http://ooi.moe/poi")
 
+
         // Disable all two finger gesture within the browser
         // which are reserved for the zoom view
-        view.setOnTouchListener { v: View?, event: MotionEvent ->
+        view.setOnTouchListener { _: View?, event: MotionEvent ->
+            val drawerView : WearableDrawerView = findViewById(R.id.drawer_view)
+            if (event.pointerCount == 1 && !drawerView.isClosed) {
+                drawerView.controller.closeDrawer()
+            }
+
             event.pointerCount > 1
         }
     }
